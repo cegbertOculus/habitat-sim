@@ -93,7 +93,8 @@ if(NOT USE_SYSTEM_MAGNUM)
   set(WITH_STBIMAGEIMPORTER ON CACHE BOOL "WITH_STBIMAGEIMPORTER" FORCE)
   set(WITH_STBIMAGECONVERTER ON CACHE BOOL "WITH_STBIMAGECONVERTER" FORCE)
   set(WITH_SDL2APPLICATION OFF CACHE BOOL "WITH_SDL2APPLICATION" FORCE)
-  set(WITH_EIGEN ON CACHE BOOL "WITH_EIGEN" FORCE)
+  set(WITH_EIGEN ON CACHE BOOL "WITH_EIGEN" FORCE) # Eigen integration
+  set(WITH_PYTHON ON CACHE BOOL "" FORCE) # Python bindings
 
   if(BUILD_GUI_VIEWERS)
     if(NOT USE_SYSTEM_GLFW)
@@ -120,6 +121,7 @@ if(NOT USE_SYSTEM_MAGNUM)
   add_subdirectory("${DEPS_DIR}/magnum")
   add_subdirectory("${DEPS_DIR}/magnum-plugins")
   add_subdirectory("${DEPS_DIR}/magnum-integration")
+  add_subdirectory("${DEPS_DIR}/magnum-bindings")
 endif()
 
 # python interpreter
