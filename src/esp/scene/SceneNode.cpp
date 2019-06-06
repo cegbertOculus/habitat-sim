@@ -19,12 +19,6 @@ SceneNode::SceneNode(MagnumScene& parentNode) {
   setParent(&parentNode);
 }
 
-SceneNode::~SceneNode() {
-  if (attachedObject_ != nullptr) {
-    attachedObject_->detach();
-  }
-}
-
 SceneNode& SceneNode::createChild() {
   // will set the parent to *this
   SceneNode* node = new SceneNode(*this);
