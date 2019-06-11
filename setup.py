@@ -19,6 +19,7 @@ import shlex
 import subprocess
 import sys
 from distutils.version import StrictVersion
+from importlib.machinery import SourceFileLoader
 
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
@@ -119,6 +120,10 @@ class CMakeExtension(Extension):
         self.sourcedir = os.path.abspath(sourcedir)
 
 
+# populated in CMakeBuild.build_extension()
+_cmake_build_dir = None
+
+
 class CMakeBuild(build_ext):
     def finalize_options(self):
         super().finalize_options()
@@ -152,6 +157,11 @@ class CMakeBuild(build_ext):
             )
             with open(args_cache_file, "w") as f:
                 json.dump(cache, f, indent=4, sort_keys=True)
+
+        # Save the CMake build directory -- that's where the generated setup.py
+        # for magnum-bindings will appear which we need to run later
+        global _cmake_build_dir
+        _cmake_build_dir = self.build_temp
 
     def run(self):
         try:
@@ -324,3 +334,15 @@ if __name__ == "__main__":
         cmdclass=dict(build_ext=CMakeBuild),
         zip_safe=False,
     )
+
+    # Now install magnum-bindings by executing the setup.py that got generated
+    # inside CMake build dir;
+    magnum_setup = os.path.join(
+        _cmake_build_dir, "deps/magnum-bindings/src/python/setup.py"
+    )
+    name, _ = os.path.splitext(os.path.basename(magnum_setup))
+    print("running setup.py for magnum-bindings...")
+    module = SourceFileLoader(name, magnum_setup).load_module()
+    if module is None:
+        # This is an assumption, take with a grain of salt
+        print("magnum-bindings (probably) installed system-wide, nothing to do")
