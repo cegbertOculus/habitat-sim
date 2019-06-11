@@ -81,7 +81,8 @@ jobs:
               export PATH=$HOME/miniconda/bin:$PATH
               . activate habitat
               pip install nbval
-              export PYTHONPATH=$PYTHONPATH:$(pwd)
+              # TODO: is there a better way?
+              export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/build/deps/magnum-bindings/src/python
               ./build.sh --headless
               HEADLESS=True pip install -e .
               pytest --ignore notebooks/habitat-sim-demo.ipynb
@@ -89,7 +90,8 @@ jobs:
           name: Run api tests
           command: |
               git clone https://github.com/facebookresearch/habitat-api.git
-              export PYTHONPATH=$PYTHONPATH:$(pwd)/habitat-sim
+              # TODO: is there a better way?
+              export PYTHONPATH=$PYTHONPATH:$(pwd)/habitat-sim:$(pwd)/habitat-sim/build/deps/magnum-bindings/src/python
               export PATH=$HOME/miniconda/bin:$PATH
               . activate habitat; cd habitat-api
               ln -s ../habitat-sim/data data
