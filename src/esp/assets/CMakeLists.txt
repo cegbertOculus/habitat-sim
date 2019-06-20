@@ -21,6 +21,11 @@ find_package(MagnumPlugins
 
 add_library(assets STATIC ${assets_SOURCES})
 
+if(MSVC)
+  # Define common math constants if we compile with MSVC.  This is needed because of Sophus.
+  target_compile_definitions(assets PUBLIC _USE_MATH_DEFINES)
+endif (MSVC)
+
 target_link_libraries(assets
   PUBLIC
     core

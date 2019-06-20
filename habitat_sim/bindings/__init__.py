@@ -22,7 +22,7 @@ modules = [
     "geo",
 ]
 
-from habitat_sim._ext.habitat_sim_bindings import Simulator as SimulatorBackend
+from habitat_sim import Simulator as SimulatorBackend
 
 exec(
     "from habitat_sim._ext.habitat_sim_bindings import ({})".format(", ".join(modules))

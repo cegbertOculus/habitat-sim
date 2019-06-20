@@ -5,8 +5,8 @@
 #include "PTexMeshData.h"
 
 #include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
+//#include <sys/mman.h>
+//#include <unistd.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
@@ -93,7 +93,7 @@ std::vector<PTexMeshData::MeshData> splitMesh(
 
 // calculate vertex grid position and code
 #pragma omp parallel for
-  for (size_t i = 0; i < mesh.vbo.size(); i++) {
+  for (int32_t i = 0; i < mesh.vbo.size(); i++) {
     const vec3f p = mesh.vbo[i].head<3>();
     vec3f pi = (p - boundingBox.min()) / splitSize;
     verts[i] = EncodeMorton3(pi.cast<int>());
@@ -112,7 +112,7 @@ std::vector<PTexMeshData::MeshData> splitMesh(
   faces.resize(numFaces);
 
 #pragma omp parallel for
-  for (size_t i = 0; i < numFaces; i++) {
+  for (int32_t i = 0; i < numFaces; i++) {
     faces[i].originalFace = i;
     faces[i].code = std::numeric_limits<uint32_t>::max();
     for (int j = 0; j < 4; j++) {
@@ -158,7 +158,7 @@ std::vector<PTexMeshData::MeshData> splitMesh(
   }
 
 #pragma omp parallel for
-  for (size_t i = 0; i < numChunks; i++) {
+  for (int32_t i = 0; i < numChunks; i++) {
     uint32_t chunkSize = chunkStart[i + 1] - chunkStart[i];
 
     std::vector<uint32_t> refdVerts;
@@ -507,8 +507,8 @@ void PTexMeshData::parsePLY(const std::string& filename,
 
   const size_t fileSize = io::fileSize(filename);
 
-  int fd = open(filename.c_str(), O_RDONLY, 0);
-  void* mmappedData = mmap(NULL, fileSize, PROT_READ, MAP_PP, fd, 0);
+  int fd = 0;//fopen(filename.c_str(), O_RDONLY);
+  void* mmappedData = NULL;//mmap(NULL, fileSize, PROT_READ, MAP_PP, fd, 0);
 
   // Parse each vertex packet and unpack
   char* bytes = &(((char*)mmappedData)[postHeader]);
@@ -566,9 +566,9 @@ void PTexMeshData::parsePLY(const std::string& filename,
            faceBytes);
   }
 
-  munmap(mmappedData, fileSize);
+  //munmap(mmappedData, fileSize);
 
-  close(fd);
+  //fclose(fd);
 }
 
 void PTexMeshData::uploadBuffersToGPU(bool forceReload) {
@@ -631,8 +631,8 @@ void PTexMeshData::uploadBuffersToGPU(bool forceReload) {
 
     const size_t numBytes = io::fileSize(rgbFile);
     const int dim = static_cast<int>(std::sqrt(numBytes / 3));  // square
-    int fd = open(rgbFile.c_str(), O_RDONLY, 0);
-    void* data = mmap(NULL, numBytes, PROT_READ, MAP_PP, fd, 0);
+    int fd = 0;//fopen(rgbFile.c_str(), O_RDONLY);
+    void* data = NULL;//mmap(NULL, numBytes, PROT_READ, MAP_PP, fd, 0);
     Magnum::Containers::ArrayView<const void> dataView{data, numBytes};
     Magnum::ImageView2D image(Magnum::PixelFormat::RGB8UI, {dim, dim},
                               dataView);
@@ -642,8 +642,8 @@ void PTexMeshData::uploadBuffersToGPU(bool forceReload) {
         .setMinificationFilter(Magnum::GL::SamplerFilter::Linear)
         // .setStorage(1, GL::TextureFormat::RGB8UI, image.size())
         .setSubImage(0, {}, image);
-    munmap(data, numBytes);
-    close(fd);
+    //munmap(data, numBytes);
+    //fclose(fd);
   }
   std::cout << "... done" << std::endl;
 

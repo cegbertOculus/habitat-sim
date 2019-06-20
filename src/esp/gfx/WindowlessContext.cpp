@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#elif __win32__
+#elif __win32__ || defined WIN32
 #include <Magnum/Platform/WindowlessWglApplication.h>
 #endif
 

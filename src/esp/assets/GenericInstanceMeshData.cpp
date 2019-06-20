@@ -12,14 +12,12 @@
 #include <Magnum/PixelFormat.h>
 #include <Magnum/Trade/Trade.h>
 
+#include <fcntl.h>
 #include <tinyply.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
