@@ -275,7 +275,7 @@ class CMakeBuild(build_ext):
                     link_dst,
                 )
 
-        self.create_compile_commands()
+        #self.create_compile_commands()
 
     def run_cmake(self, cmake_args):
         if args.force_cmake:
@@ -369,7 +369,8 @@ if __name__ == "__main__":
 
     pymagnum_build_dir = osp.join(
         _cmake_build_dir, "deps", "magnum-bindings", "src", "python"
-    )
+    ).replace("\\", "/")
+    print(pymagnum_build_dir)
 
     if not args.skip_install_magnum and not is_pip():
         subprocess.check_call(shlex.split(f"pip install {pymagnum_build_dir}"))

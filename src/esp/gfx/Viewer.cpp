@@ -109,7 +109,7 @@ Viewer::Viewer(const Arguments& arguments)
   }
 
   // connect controls to navmesh if loaded
-  /*
+  
   if (pathfinder_->isLoaded()) {
       controls_.setMoveFilterFunction([&](const vec3f& start, const vec3f& end)
   { vec3f currentPosition = pathfinder_->tryStep(start, end); LOG(INFO) <<
@@ -120,7 +120,7 @@ Viewer::Viewer(const Arguments& arguments)
         return currentPosition;
       });
     }
-    */
+    
 
   renderCamera_->node().setTransformation(
       cameraNode_->absoluteTransformation());
@@ -255,7 +255,9 @@ void Viewer::drawEvent() {
   int DEFAULT_SCENE = 0;
   int sceneID = sceneID_[DEFAULT_SCENE];
   auto& sceneGraph = sceneManager_.getSceneGraph(sceneID);
-  renderCamera_->getMagnumCamera().draw(sceneGraph.getDrawables());
+  if (renderCamera_) {
+    renderCamera_->getMagnumCamera().draw(sceneGraph.getDrawables());
+  }
 
   swapBuffers();
   timeline_.nextFrame();
